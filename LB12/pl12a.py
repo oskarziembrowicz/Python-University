@@ -1,5 +1,4 @@
 from requests import get
-import io
 
 # f = get("http://docs.python.org")
 # s = f.text
@@ -10,13 +9,13 @@ import io
 #     print(i.decode("UTF-8"))
 # f.close()
 
-def stolica1(p):
+def capital1(p):
     f = get("https://pl.wikipedia.org/wiki/"+p)
     s = f.text
     print(s.split("Stolica</a>")[1].split('">')[1].split("<")[0])
     f.close()
 
-def stolica2(p):
+def capital2(p):
     f = get("https://pl.wikipedia.org/wiki/"+p, stream=True)
     b, c, d = "", "", ""
     for i in f.iter_lines():
@@ -25,16 +24,26 @@ def stolica2(p):
             f.close()
             print(d.split('">')[1].split("<")[0])
 
-# stolica1("Polska")
+# capital1("Polska")
 
 from time import time
 
 panstwa = ["Polska", "Niemcy", "Szwecja", "Islandia", "Indie",
-           "Japonia", "Tanzania",
-           "Kanada",
-           "Australia",
-           "Kolumbia"]
+           "Japonia", "Tanzania", "Kanada", "Australia", "Kolumbia"]
+
+# t = time()
+# print(list(map(capitol1, panstwa)))
+# print(time()-t)
+
+from threading import Thread
+
+def w_capital(i):
+    print(capital1(i))
 
 t = time()
-print(list(map(stolica1, panstwa)))
+threads = [Thread(target=w_capital, args=(p,)) for p in panstwa]
+for thread in threads:
+    thread.start()
+for thread in threads:
+    thread.join()
 print(time()-t)
